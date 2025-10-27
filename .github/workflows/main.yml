@@ -58,7 +58,7 @@ jobs:
     needs: [ 'build-and-test' ]
     permissions:
       contents: write
-    if: github.repository == 'bitnami/wait-for-port' && startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
@@ -98,14 +98,3 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  notify:
-    name: Send notification
-    needs:
-      - release
-    if: ${{ always() && needs.release.result == 'failure' }}
-    uses: bitnami/support/.github/workflows/gchat-notification.yml@main
-    with:
-      workflow: ${{ github.workflow }}
-      job-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-    secrets:
-      webhook-url: ${{ secrets.GCHAT_CONTENT_ALERTS_WEBHOOK_URL }}
